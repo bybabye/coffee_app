@@ -43,9 +43,14 @@ class CustomAppBar extends StatelessWidget {
       automaticallyImplyLeading: false,
       title: Row(
         children: [
-          CircleAvatar(
-            backgroundImage: NetworkImage(url),
-          ),
+          url.isEmpty
+              ? const Icon(
+                  Icons.account_circle,
+                  color: Colors.white,
+                )
+              : CircleAvatar(
+                  backgroundImage: NetworkImage(url),
+                ),
           const SizedBox(
             width: 10,
           ),

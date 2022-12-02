@@ -2,6 +2,7 @@ import 'package:app_social/models/user_app.dart';
 import 'package:app_social/page/login/login_page_account.dart';
 import 'package:app_social/routes/navigation_service.dart';
 import 'package:app_social/routes/routes.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -27,6 +28,17 @@ class AuthencationProvider extends ChangeNotifier {
         navigationService.goPage(Routes.homePage);
       }
     });
+  }
+
+  Future<String> forgotPassword(String email) async {
+    String result = '';
+    try {
+      await auth.sendPasswordResetEmail(email: email);
+      result = 'success';
+    } catch (e) {
+      result = e.toString();
+    }
+    return result;
   }
 
   Future<void> signInWithGoogle() async {

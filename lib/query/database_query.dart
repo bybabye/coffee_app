@@ -15,8 +15,7 @@ class DatabaseQuery {
       String collection, String field, String condition) {
     return db
         .collection(collection)
-        .where(field, isLessThanOrEqualTo: condition)
-        .orderBy(field)
+        .where(field, isGreaterThanOrEqualTo: condition)
         .snapshots();
   }
 

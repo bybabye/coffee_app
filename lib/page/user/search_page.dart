@@ -68,43 +68,47 @@ class _SearchPageState extends State<SearchPage> {
               ),
             ),
             body: SingleChildScrollView(
-              child: StreamBuilder(
-                stream: userProvider.searchProduct(name),
-                builder: (context, AsyncSnapshot<List<Product?>> snapshot) {
-                  if (snapshot.hasData) {
-                    return GridView.count(
-                      shrinkWrap: true,
-                      crossAxisCount: 2,
-                      padding: const EdgeInsets.all(20),
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                      childAspectRatio: .8,
-                      children: snapshot.data!
-                          .map(
-                            (item) => InkWell(
-                              onTap: () => userProvider.auth.navigationService
-                                  .navigateToPage(
-                                ProductDesCriptionPage(
-                                  item: item,
-                                  userProvider: userProvider,
-                                ),
-                              ),
-                              child: CustomCardProduct(item: item!),
-                            ),
-                          )
-                          .toList(),
-                    );
-                  } else if (snapshot.hasError) {
-                    return Center(
-                      child: Text(snapshot.error.toString()),
-                    );
-                  } else {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                },
-              ),
+              child: name.isEmpty
+                  ? const SizedBox()
+                  : StreamBuilder(
+                      stream: userProvider.searchProduct(name),
+                      builder:
+                          (context, AsyncSnapshot<List<Product?>> snapshot) {
+                        if (snapshot.hasData) {
+                          return GridView.count(
+                            shrinkWrap: true,
+                            crossAxisCount: 2,
+                            padding: const EdgeInsets.all(20),
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                            childAspectRatio: .8,
+                            children: snapshot.data!
+                                .map(
+                                  (item) => InkWell(
+                                    onTap: () => userProvider
+                                        .auth.navigationService
+                                        .navigateToPage(
+                                      ProductDesCriptionPage(
+                                        item: item,
+                                        userProvider: userProvider,
+                                      ),
+                                    ),
+                                    child: CustomCardProduct(item: item!),
+                                  ),
+                                )
+                                .toList(),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Center(
+                            child: Text(snapshot.error.toString()),
+                          );
+                        } else {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                      },
+                    ),
             ),
           );
         },

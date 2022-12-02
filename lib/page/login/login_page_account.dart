@@ -2,6 +2,7 @@ import 'package:app_social/components/custom_button_login.dart';
 import 'package:app_social/components/custom_validator_field.dart';
 import 'package:app_social/components/show_request.dart';
 import 'package:app_social/provider/authencation_provider.dart';
+import 'package:app_social/routes/routes.dart';
 import 'package:app_social/theme/app_assets.dart';
 import 'package:app_social/theme/app_styles.dart';
 import 'package:flutter/material.dart';
@@ -125,10 +126,14 @@ class _LoginPageAccountState extends State<LoginPageAccount> {
                             ),
                           ),
                           Center(
-                            child: Text(
-                              "Forgot Password?",
-                              style: AppStyle.h3.copyWith(
-                                  letterSpacing: 1, color: Colors.blue),
+                            child: TextButton(
+                              onPressed: () =>
+                                  auth.navigationService.goPage(Routes.forgot),
+                              child: Text(
+                                "Forgot Password?",
+                                style: AppStyle.h3.copyWith(
+                                    letterSpacing: 1, color: Colors.blue),
+                              ),
                             ),
                           ),
                           Row(

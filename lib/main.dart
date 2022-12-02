@@ -1,3 +1,4 @@
+import 'package:app_social/page/login/forgot_password_page.dart';
 import 'package:app_social/page/login/login_page_account.dart';
 
 import 'package:app_social/page/user/home_page.dart';
@@ -48,6 +49,7 @@ class MyApp extends StatelessWidget {
         routes: {
           Routes.loginAccountPage: (context) => const LoginPageAccount(),
           Routes.homePage: (context) => const HomePage(),
+          Routes.forgot: (context) => const ForgosPasswordPage(),
         },
       ),
     );
