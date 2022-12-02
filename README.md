@@ -1,16 +1,11 @@
-# app_social
+Ứng dụng đặt đồ uống 
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Technology :
+  Flutter
+  Firebase
+Thành quả : 
+  
+  
+![Screenshot_1669987932](https://user-images.githubusercontent.com/89548252/205304089-a18b1c44-365e-4cae-a26b-588ffa217993.png)
+![Screenshot_1669987956](https://user-images.githubusercontent.com/89548252/205304171-defd623d-cbcf-4813-9264-fe50520aa049.png)
+![Screenshot_1669988026](https://user-images.githubusercontent.com/89548252/205304400-b85c475f-af1d-443c-95ea-5a31c9344bd8.png)
