@@ -6,6 +6,7 @@ import 'package:app_social/routes/routes.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -41,7 +42,8 @@ class AuthencationProvider extends ChangeNotifier {
     return result;
   }
 
-  Future<void> signInWithGoogle() async {
+  Future<String> signInWithGoogle() async {
+    String result = 'success';
     // Trigger the authentication flow
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
@@ -63,45 +65,61 @@ class AuthencationProvider extends ChangeNotifier {
           displayname: userCredential.user!.displayName ?? "",
           email: userCredential.user!.email ?? "",
           photoURL: userCredential.user!.photoURL ?? "",
-          role: Role.user,
+          online: DateTime.now(),
         );
         db.collection('users').doc(userapp.uid).set(userapp.toJson());
       }
     } catch (e) {
       // ignore: avoid_print
-      print(e);
+      result = e.toString();
     }
+    return result;
 
     // Once signed in, return the UserCredential
   }
 
-  Future<String> signInWithEmailAndPassword(
-      String email, String password) async {
+  Future<String> signInWithFacebook() async {
     String result = 'success';
     try {
-      final userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: password);
+      final LoginResult loginResult =
+          await FacebookAuth.instance.login(permissions: ['public_profile']);
 
+      // // Create a credential from the access token
+      final OAuthCredential facebookAuthCredential =
+          FacebookAuthProvider.credential(loginResult.accessToken!.token);
+      final userCredential =
+          await auth.signInWithCredential(facebookAuthCredential);
       UserApp userapp = UserApp(
         uid: userCredential.user!.uid,
         displayname: userCredential.user!.displayName ?? "",
         email: userCredential.user!.email ?? "",
         photoURL: userCredential.user!.photoURL ?? "",
-        role: Role.employee,
+        online: DateTime.now(),
       );
       db.collection('users').doc(userapp.uid).set(userapp.toJson());
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        result = 'No user found for that email.';
-      } else if (e.code == 'wrong-password') {
-        result = 'Wrong password provided for that user.';
-      }
+    } catch (e) {
+      // ignore: avoid_print
+      result = e.toString();
     }
     return result;
   }
 
+  Future<void> signInWithEmailAndPassword(String email, String password) async {
+    try {
+      await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        print('Wrong password provided for that user.');
+      }
+    }
+  }
+
   Future<void> logout() async {
-    GoogleSignIn().signOut();
+    await FacebookAuth.instance.logOut();
+    await GoogleSignIn().signOut();
     await FirebaseAuth.instance.signOut();
     navigationService.goToPageAndRemoveAllRoutes(const LoginPageAccount());
   }

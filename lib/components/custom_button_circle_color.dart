@@ -1,14 +1,15 @@
-import 'package:app_social/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
-class CustomButtonCircle extends StatelessWidget {
-  const CustomButtonCircle({
+class CustomButtonCircleColor extends StatelessWidget {
+  const CustomButtonCircleColor({
     super.key,
     required this.child,
     required this.func,
+    required this.color,
   });
   final Widget child;
   final Function() func;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
@@ -18,14 +19,7 @@ class CustomButtonCircle extends StatelessWidget {
         height: 60,
         width: 60,
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.bottomLeft,
-            end: Alignment.topRight,
-            colors: [
-              AppColor.kSecondCircleColorButton.withOpacity(.3),
-              AppColor.kFirstCircleColorButton.withOpacity(.05),
-            ],
-          ),
+          color: color,
           shape: BoxShape.circle,
         ),
         child: Center(

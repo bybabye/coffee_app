@@ -1,67 +1,38 @@
-enum Role {
-  admin,
-  employee,
-  user,
-}
-
 class UserApp {
   final String uid;
   final String displayname;
   final String email;
   final String photoURL;
-  final Role role;
+  final DateTime online;
 
-  UserApp({
-    required this.uid,
-    required this.displayname,
-    required this.email,
-    required this.photoURL,
-    required this.role,
-  });
+  UserApp(
+      {required this.uid,
+      required this.displayname,
+      required this.email,
+      required this.photoURL,
+      required this.online});
 
   Map<String, dynamic> toJson() {
     // ignore: no_leading_underscores_for_local_identifiers
-    String _role;
-    switch (role) {
-      case Role.admin:
-        _role = 'admin';
-        break;
-      case Role.employee:
-        _role = 'employee';
-        break;
-      case Role.user:
-        _role = 'user';
-        break;
-    }
+
     return {
       'uid': uid,
-      'displayname': displayname,
-      'role': _role,
+      'displayName': displayname,
       'email': email,
       'photoURL': photoURL,
+      'online': online,
     };
   }
 
   factory UserApp.fromJson(Map<String, dynamic> json) {
     // ignore: no_leading_underscores_for_local_identifiers
-    Role _role = Role.user;
-    switch (json['role']) {
-      case 'admin':
-        _role = Role.admin;
-        break;
-      case 'employee':
-        _role = Role.employee;
-        break;
-      case 'user':
-        _role = Role.user;
-        break;
-    }
+
     return UserApp(
       uid: json['uid'],
-      displayname: json['displayname'],
+      displayname: json['displayName'],
       email: json['email'],
-      photoURL: json['photoURL'],
-      role: _role,
+      photoURL: json['photoURL'] ?? "",
+      online: json['online'].toDate(),
     );
   }
 }
