@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:ui';
-import 'package:app_social/models/api.dart';
 import 'package:app_social/models/chats.dart';
 import 'package:app_social/models/debouncer.dart';
 import 'package:app_social/models/user_app.dart';
@@ -9,7 +8,7 @@ import 'package:app_social/provider/chat_provider.dart';
 import 'package:app_social/components/custom_button_circle.dart';
 import 'package:app_social/provider/authencation_provider.dart';
 import 'package:app_social/theme/app_assets.dart';
-
+import 'package:sizer/sizer.dart';
 import 'package:app_social/theme/app_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,8 +22,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late AuthencationProvider auth;
-  late double height;
-  late double width;
+
   late ChatProvider chatProvider;
   Debouncer debouncer = Debouncer();
   String field = '';
@@ -34,8 +32,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     auth = Provider.of(context);
     chatProvider = Provider.of(context);
-    height = MediaQuery.of(context).size.height;
-    width = MediaQuery.of(context).size.width;
+
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
@@ -140,8 +137,8 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                 ),
-                const SizedBox(
-                  height: 100,
+                SizedBox(
+                  height: 12.h,
                 ),
                 Flexible(
                   child: StreamBuilder(
@@ -150,13 +147,13 @@ class _HomePageState extends State<HomePage> {
                       if (snapshot.hasData) {
                         return Container(
                           margin: const EdgeInsets.only(top: 12),
-                          height: height,
-                          width: width,
-                          decoration: const BoxDecoration(
+                          height: 100.h,
+                          width: 100.w,
+                          decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(32),
-                              topRight: Radius.circular(32),
+                              topLeft: Radius.circular(3.h),
+                              topRight: Radius.circular(3.h),
                             ),
                           ),
                           child: ListView.builder(
@@ -196,8 +193,8 @@ class _HomePageState extends State<HomePage> {
                                           borderRadius:
                                               BorderRadius.circular(16),
                                         ),
-                                        height: 100,
-                                        width: width,
+                                        height: 12.h,
+                                        width: 100.w,
                                         child: Column(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceAround,
@@ -210,8 +207,8 @@ class _HomePageState extends State<HomePage> {
                                               children: [
                                                 user.photoURL.isNotEmpty
                                                     ? Container(
-                                                        height: 60,
-                                                        width: 60,
+                                                        height: 7.h,
+                                                        width: 15.w,
                                                         decoration:
                                                             BoxDecoration(
                                                           shape:
@@ -224,9 +221,9 @@ class _HomePageState extends State<HomePage> {
                                                                   BoxFit.cover),
                                                         ),
                                                       )
-                                                    : const SizedBox(
-                                                        height: 60,
-                                                        width: 60,
+                                                    : SizedBox(
+                                                        height: 7.h,
+                                                        width: 15.w,
                                                       ),
                                                 Column(
                                                   crossAxisAlignment:

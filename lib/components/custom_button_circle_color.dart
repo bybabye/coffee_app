@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
 
 class CustomButtonCircleColor extends StatelessWidget {
   const CustomButtonCircleColor({
@@ -16,16 +17,16 @@ class CustomButtonCircleColor extends StatelessWidget {
     return InkWell(
       onTap: func,
       child: Container(
-        height: 60,
-        width: 60,
+        height: 7.h,
+        width: 15.w,
         decoration: BoxDecoration(
           color: color,
           shape: BoxShape.circle,
         ),
         child: Center(
           child: SizedBox(
-            height: 40,
-            width: 40,
+            height: 4.h,
+            width: 11.w,
             child: child,
           ),
         ),

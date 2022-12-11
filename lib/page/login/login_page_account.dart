@@ -6,6 +6,7 @@ import 'package:app_social/theme/app_assets.dart';
 import 'package:app_social/theme/app_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sizer/sizer.dart';
 
 class LoginPageAccount extends StatefulWidget {
   const LoginPageAccount({super.key});
@@ -15,8 +16,6 @@ class LoginPageAccount extends StatefulWidget {
 }
 
 class _LoginPageAccountState extends State<LoginPageAccount> {
-  late double height;
-  late double width;
   late AuthencationProvider auth;
   late TextEditingController controllerUser;
   late TextEditingController controllerPassword;
@@ -31,13 +30,11 @@ class _LoginPageAccountState extends State<LoginPageAccount> {
 
   @override
   Widget build(BuildContext context) {
-    height = MediaQuery.of(context).size.height;
-    width = MediaQuery.of(context).size.width;
     auth = Provider.of<AuthencationProvider>(context);
     return Scaffold(
       body: SizedBox(
-        height: height,
-        width: width,
+        height: 100.h,
+        width: 100.w,
         child: DecoratedBox(
           decoration: const BoxDecoration(
             image: DecorationImage(
@@ -63,7 +60,7 @@ class _LoginPageAccountState extends State<LoginPageAccount> {
                         style: AppStyle.h1.copyWith(color: Colors.white),
                       ),
                       SizedBox(
-                        height: 200,
+                        height: 24.5.h,
                         child: Stack(
                           fit: StackFit.expand,
                           children: [
@@ -75,8 +72,8 @@ class _LoginPageAccountState extends State<LoginPageAccount> {
                                   sigmaY: 10.0,
                                 ),
                                 child: Container(
-                                  height: 200,
-                                  width: width,
+                                  height: 24.5.h,
+                                  width: 100.w,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(16),
                                     border: Border.all(
@@ -109,7 +106,9 @@ class _LoginPageAccountState extends State<LoginPageAccount> {
                                       CustomButton(
                                         image: AppAssets.facebook,
                                         text: 'Login In With facebook',
-                                        func: () {},
+                                        func: () async {
+                                          await auth.signInWithFacebook();
+                                        },
                                       ),
                                     ],
                                   ),

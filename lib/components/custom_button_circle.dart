@@ -1,5 +1,6 @@
 import 'package:app_social/theme/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
 
 class CustomButtonCircle extends StatelessWidget {
   const CustomButtonCircle({
@@ -15,8 +16,8 @@ class CustomButtonCircle extends StatelessWidget {
     return InkWell(
       onTap: func,
       child: Container(
-        height: 60,
-        width: 60,
+        height: 7.h,
+        width: 15.w,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.bottomLeft,
@@ -30,8 +31,8 @@ class CustomButtonCircle extends StatelessWidget {
         ),
         child: Center(
           child: SizedBox(
-            height: 40,
-            width: 40,
+            height: 5.h,
+            width: 12.w,
             child: child,
           ),
         ),

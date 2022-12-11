@@ -1,14 +1,16 @@
+import 'dart:io';
 import 'package:app_social/components/card_item.dart';
-import 'package:app_social/models/api.dart';
+import 'package:app_social/components/card_video.dart';
 import 'package:app_social/models/message.dart';
-import 'package:app_social/page/video_sdk/meeting_screen.dart';
 import 'package:app_social/provider/authencation_provider.dart';
 import 'package:app_social/provider/chat_provider.dart';
-
+import 'package:app_social/service/storage_service.dart';
 import 'package:app_social/theme/app_styles.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-
+import 'package:mime/mime.dart';
 import 'package:provider/provider.dart';
+import 'package:sizer/sizer.dart';
 
 class MessagePage extends StatefulWidget {
   const MessagePage({
@@ -37,12 +39,13 @@ class MessagePage extends StatefulWidget {
 
 class _MessagePageState extends State<MessagePage> {
   late AuthencationProvider auth;
-  late double height;
-  late double width;
+
   late ChatProvider chatProvider;
   late TextEditingController controller;
   final GlobalKey<AnimatedListState> key = GlobalKey();
+  StorageService ss = StorageService();
   bool isMeetingActive = false;
+  File? isfile;
 
   final Tween<Offset> offset =
       Tween(begin: const Offset(0, 1), end: const Offset(0, 0));
@@ -71,6 +74,16 @@ class _MessagePageState extends State<MessagePage> {
     });
   }
 
+  Future<void> pickFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    if (result != null) {
+      File file = File(result.files.single.path ?? "");
+      setState(() {
+        isfile = file;
+      });
+    }
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -80,8 +93,6 @@ class _MessagePageState extends State<MessagePage> {
   @override
   Widget build(BuildContext context) {
     auth = Provider.of(context);
-    height = MediaQuery.of(context).size.height;
-    width = MediaQuery.of(context).size.width;
 
     return Scaffold(
       backgroundColor: const Color(0xFF131B26),
@@ -119,125 +130,147 @@ class _MessagePageState extends State<MessagePage> {
           ),
         ],
       ),
-      body: isMeetingActive
-          ? MeetingScreen(
-              meetingId: '',
-              token: token,
-              leaveMeeting: () {
-                setState(
-                  () => isMeetingActive = false,
-                );
-              },
-            )
-          : StreamBuilder(
-              stream: stream,
-              builder: ((context, snapshot) {
-                if (snapshot.hasData) {
-                  return SizedBox(
-                    height: height,
-                    width: width,
-                    child: Column(
-                      children: [
-                        Expanded(
-                          flex: 11,
-                          child: AnimatedList(
-                            key: key,
-                            physics: const BouncingScrollPhysics(),
-                            reverse: true,
-                            initialItemCount: snapshot.data!.length,
-                            itemBuilder: ((context, index, animation) {
-                              final message = snapshot.data![index];
-
-                              return SlideTransition(
-                                position: animation.drive(offset),
-                                child: CardItem(
-                                  text: message.content,
-                                  senderId: message.senderID,
-                                  userId: auth.user.uid,
+      body: StreamBuilder(
+        stream: stream,
+        builder: ((context, snapshot) {
+          if (snapshot.hasData) {
+            return SizedBox(
+              height: 100.h,
+              width: 100.w,
+              child: Column(
+                children: [
+                  Expanded(
+                    flex: 11,
+                    child: AnimatedList(
+                      shrinkWrap: true,
+                      key: key,
+                      physics: const BouncingScrollPhysics(),
+                      reverse: true,
+                      initialItemCount: snapshot.data!.length,
+                      itemBuilder: ((context, index, animation) {
+                        final message = snapshot.data![index];
+                        bool isCheck = auth.user.uid == message.senderID;
+                        return SlideTransition(
+                          position: animation.drive(offset),
+                          child: message.type.name == 'video'
+                              ? CardVideo(
+                                  url: message.content,
+                                  isCheck: isCheck,
                                   photoURL: widget.photoURL,
-                                ),
-                              );
-                            }),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: Center(
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  flex: 10,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFF354657),
-                                      borderRadius: BorderRadius.circular(30),
-                                    ),
-                                    padding: const EdgeInsets.only(
-                                        left: 25, right: 20),
-                                    margin: const EdgeInsets.only(
-                                      left: 25,
-                                    ),
-                                    child: TextField(
-                                      style: AppStyle.h4
-                                          .copyWith(color: Colors.white),
-                                      controller: controller,
-                                      decoration: InputDecoration(
-                                        icon: const Icon(
-                                          Icons.image,
-                                          color: Colors.white,
-                                        ),
-                                        hintText: "Write message here...",
-                                        hintStyle: AppStyle.h4
-                                            .copyWith(color: Colors.white),
-                                        border: InputBorder.none,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: InkWell(
-                                    onTap: () async {
-                                      if (controller.text.isNotEmpty) {
-                                        await chatProvider.sendMessage(
-                                            widget.cid,
-                                            controller.text,
-                                            auth.user.uid,
-                                            Type.text);
-
-                                        controller.text = '';
-                                      }
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.all(12.0),
-                                      decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: const Icon(
-                                        Icons.send,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
                                 )
-                              ],
+                              : CardItem(
+                                  content: message.content,
+                                  isCheck: isCheck,
+                                  photoURL: widget.photoURL,
+                                  type: message.type.name,
+                                ),
+                        );
+                      }),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Center(
+                      child: Row(
+                        children: [
+                          Expanded(
+                            flex: 10,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF354657),
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              padding:
+                                  const EdgeInsets.only(left: 25, right: 20),
+                              margin: const EdgeInsets.only(
+                                left: 25,
+                              ),
+                              child: TextField(
+                                style:
+                                    AppStyle.h4.copyWith(color: Colors.white),
+                                controller: controller,
+                                decoration: InputDecoration(
+                                  icon: InkWell(
+                                    onTap: () async {
+                                      await pickFile();
+                                      String? mimeStr =
+                                          lookupMimeType(isfile!.path);
+                                      var fileType = mimeStr!.split('/');
+
+                                      String mid =
+                                          await chatProvider.sendMessage(
+                                        widget.cid,
+                                        '',
+                                        auth.user.uid,
+                                        fileType[0] == 'video'
+                                            ? Type.video
+                                            : Type.image,
+                                      );
+
+                                      String url = await ss.uploadFileToStorage(
+                                          name: widget.displayName,
+                                          file: isfile!,
+                                          id: auth.user.uid);
+                                      await chatProvider.uploadFile(
+                                          mid: mid, cid: widget.cid, url: url);
+                                    },
+                                    child: const Icon(
+                                      Icons.image,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  hintText: "Write message here...",
+                                  hintStyle:
+                                      AppStyle.h4.copyWith(color: Colors.white),
+                                  border: InputBorder.none,
+                                ),
+                              ),
                             ),
                           ),
-                        )
-                      ],
+                          Expanded(
+                            flex: 2,
+                            child: InkWell(
+                              onTap: () async {
+                                if (controller.text.isNotEmpty) {
+                                  await chatProvider.sendMessage(
+                                      widget.cid,
+                                      controller.text,
+                                      auth.user.uid,
+                                      Type.text);
+
+                                  controller.text = '';
+                                }
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(12.0),
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.send,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  );
-                } else if (snapshot.hasError) {
-                  return const Center(
-                    child: Text('error'),
-                  );
-                } else {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              }),
-            ),
+                  ),
+                ],
+              ),
+            );
+          } else if (snapshot.hasError) {
+            return const Center(
+              child: Text('error'),
+            );
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        }),
+      ),
     );
   }
 }

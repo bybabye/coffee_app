@@ -1,13 +1,14 @@
-import 'package:app_social/models/api.dart';
 import 'package:app_social/models/chats.dart';
 import 'package:app_social/models/message.dart';
 import 'package:app_social/models/user_app.dart';
-import 'package:app_social/query/database_query.dart';
+import 'package:app_social/service/database_query.dart';
+
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 class ChatProvider extends ChangeNotifier {
   late DatabaseQuery dq;
+
   ChatProvider() {
     dq = DatabaseQuery();
   }
@@ -64,7 +65,7 @@ class ChatProvider extends ChangeNotifier {
     return chat;
   }
 
-  Future<void> sendMessage(
+  Future<String> sendMessage(
       String cid, String content, String senderID, Type type) async {
     String mid = const Uuid().v1();
 
@@ -77,6 +78,7 @@ class ChatProvider extends ChangeNotifier {
     );
 
     await dq.sendMessQuery('chats', cid, 'messages', mid, message.toJson());
+    return mid;
   }
 
   Stream<List<Message>> getMessage(
@@ -96,5 +98,10 @@ class ChatProvider extends ChangeNotifier {
     } catch (e) {
       print(e);
     }
+  }
+
+  Future<void> uploadFile(
+      {required String mid, required String cid, required String url}) async {
+    await dq.updateMessQuery('chats', cid, 'messages', mid, {'content': url});
   }
 }

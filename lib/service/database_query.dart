@@ -60,6 +60,16 @@ class DatabaseQuery {
         .set(json);
   }
 
+  Future<void> updateMessQuery(String collection, String cid,
+      String collection2, String mid, Map<String, dynamic> json) {
+    return db
+        .collection(collection)
+        .doc(cid)
+        .collection(collection2)
+        .doc(mid)
+        .update(json);
+  }
+
   Future<void> deteleQuery(String collection, String id) {
     return db.collection(collection).doc(id).delete();
   }
